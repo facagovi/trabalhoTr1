@@ -1,6 +1,5 @@
 class EnlaceTx:
     def __init__(self):
-    # padrão IEEE/ASCII
     #FLAG 01111110 (Usada para marcar inicio/fim)
         self.FLAG = [0, 1, 1, 1, 1, 1, 1, 0] 
     #ESC 00011011 (Usada para proteger dados que parecem flags)
@@ -70,7 +69,7 @@ class EnlaceTx:
         return dados + checksum_bits
 
     def detecta_crc32(self, dados):
-        #gerador do IEEE 802.3
+        #IEEE 802.3
         polinomio = [1, 0, 0, 0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 1]
         dados_aumentados = list(dados) + [0] * 32
         #(XOR)
