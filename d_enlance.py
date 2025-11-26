@@ -3,19 +3,19 @@ class EnlaceRx:
         self.FLAG = [0, 1, 1, 1, 1, 1, 1, 0] 
         self.ESC  = [0, 0, 0, 1, 1, 0, 1, 1] 
 
-    def _bits_para_int(self, lista_bits):
+    def tremint(self, lista_bits):
         binario_str = "".join(str(b) for b in lista_bits)
         return int(binario_str, 2)
     
-    def desenquadra_contagem_caracteres(self, quadro):
+    def denqCara(self, quadro):
         if len(quadro) < 16:
             return []
         header = quadro[:16]
-        qtd_bytes = self._bits_para_int(header)
+        qtd_bytes = self.tremint(header)
         fim_dados = 16 + (qtd_bytes * 8)
         return quadro[16:fim_dados]
 
-    def desenquadra_insercao_bytes(self, quadro):
+    def denqBytes(self, quadro):
         if quadro[:8] == self.FLAG:
             quadro = quadro[8:]
         if quadro[-8:] == self.FLAG:
@@ -24,50 +24,49 @@ class EnlaceRx:
         dados_limpos = []
         i = 0
         while i < len(quadro):
-            byte_atual = quadro[i : i+8]
-            if byte_atual == self.ESC:
+            byta = quadro[i : i+8]
+            if byta == self.ESC:
                 #pula o ESC (i+8) e pega o próximo byte como dado literal
                 i += 8
                 proximo_byte = quadro[i : i+8]
                 dados_limpos.extend(proximo_byte)
             else:
-                dados_limpos.extend(byte_atual)
+                dados_limpos.extend(byta)
             i += 8
         return dados_limpos
 
-    def desenquadra_insercao_bits(self, quadro):
+    def denqBits(self, quadro):
         if quadro[:8] == self.FLAG:
             quadro = quadro[8:]
         if quadro[-8:] == self.FLAG:
             quadro = quadro[:-8]
 
         dados_limpos = []
-        contador_uns = 0
+        uns = 0
         
         i = 0
         while i < len(quadro):
             bit = quadro[i]
             
             if bit == 1:
-                contador_uns += 1
+                uns += 1
                 dados_limpos.append(bit)
             else:
-                if contador_uns == 5:
+                if uns == 5:
                     pass #ignora o 0 inserido na transmissão
                 else:
                     dados_limpos.append(bit)
-                
-                contador_uns = 0 
+                uns = 0 
             i += 1
         return dados_limpos
 
-    def checa_paridade_par(self, quadro):
-        qtd_uns = quadro.count(1)
-        if qtd_uns % 2 == 0:
+    def Ddetpar(self, quadro):
+        qUns = quadro.count(1)
+        if qUns % 2 == 0:
             return True, quadro[:-1]
         else:
             return False, []
-    def checa_checksum(self, quadro):
+    def Ddetsoma(self, quadro):
         dados_copia = list(quadro)
         soma = 0
         for i in range(0, len(dados_copia), 16):
@@ -82,20 +81,20 @@ class EnlaceRx:
             return True, quadro[:-16]
         else:
             return False, []
-    def checa_crc32(self, quadro):
-        polinomio = [1, 0, 0, 0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 1]
+    def Ddet32(self, quadro):
+        crc = [1, 0, 0, 0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 1]
         dados_trabalho = list(quadro)
         
         for i in range(len(dados_trabalho) - 32):
             if dados_trabalho[i] == 1:
-                for j in range(len(polinomio)):
-                    dados_trabalho[i + j] ^= polinomio[j]         
+                for j in range(len(crc)):
+                    dados_trabalho[i + j] ^= crc[j]         
         resto = dados_trabalho[-32:]
         if 1 not in resto: 
             return True, quadro[:-32] 
         else:
             return False, []
-    def decodifica_hamming(self, quadro):
+    def decoHamming(self, quadro):
         dados_finais = []
         
         for i in range(0, len(quadro), 7):
