@@ -3,7 +3,6 @@ class EnlaceTx:
     # padrão IEEE/ASCII
     #FLAG 01111110 (Usada para marcar inicio/fim)
         self.FLAG = [0, 1, 1, 1, 1, 1, 1, 0] 
-    
     #ESC 00011011 (Usada para proteger dados que parecem flags)
         self.ESC  = [0, 0, 0, 1, 1, 0, 1, 1] 
 
@@ -35,8 +34,6 @@ class EnlaceTx:
 
         for bit in dados:
             buffer_saida.append(bit)
-
-            #logica de contagem
             if bit == 1:
                 contador_uns += 1                
                 if contador_uns == 5:
@@ -63,16 +60,12 @@ class EnlaceTx:
             pedaco_str = "".join(str(x) for x in pedaco_bits)
             pedaco_int = int(pedaco_str, 2)
             soma += pedaco_int
-            #pegamos o bit que sobrou e somamos de volta no início.
             while soma > 0xFFFF: # 0xFFFF é 65535
                 carry = soma >> 16 
                 soma = soma & 0xFFFF
                 soma += carry       
-        
         #inversão
         checksum = ~soma & 0xFFFF
-        
-        # converte o resultado do checksum em lista de bits e anexa ao final
         checksum_bits = self._lista_para_bits(checksum, 16)
         return dados + checksum_bits
 
@@ -81,13 +74,11 @@ class EnlaceTx:
         polinomio = [1, 0, 0, 0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 1]
         dados_aumentados = list(dados) + [0] * 32
         #(XOR)
-        for i in range(len(dados)):
-            # Só fazemos a divisão se o bit atual for 1 
+        for i in range(len(dados)): 
             if dados_aumentados[i] == 1:
                 for j in range(len(polinomio)):
                     dados_aumentados[i + j] = dados_aumentados[i + j] ^ polinomio[j] #subtração em GF(2) é XOR
         resto = dados_aumentados[-(len(polinomio)-1):]
-        
         return dados + resto 
     
     def correcao_hamming(self, dados):
