@@ -40,7 +40,7 @@ class Simulador:
 
         #enlace - enquadramento
         if config['enquadramento'] == 'Contagem':
-            bits_quadro = self.tx.enqCara(bits_dados)
+            bits_quadro = self.tx.enqCont(bits_dados)
         elif config['enquadramento'] == 'Byte Stuffing':
             bits_quadro = self.tx.enqBytes(bits_dados)
         elif config['enquadramento'] == 'Bit Stuffing':
@@ -78,7 +78,7 @@ class Simulador:
         #enlace-desenquadramento
         bits_desenquadrados = []
         if config['enquadramento'] == 'Contagem':
-            bits_desenquadrados = self.rx.denqCara(bits_recebidos_fisica)
+            bits_desenquadrados = self.rx.denqCont(bits_recebidos_fisica)
         elif config['enquadramento'] == 'Byte Stuffing':
             bits_desenquadrados = self.rx.denqBytes(bits_recebidos_fisica)
         elif config['enquadramento'] == 'Bit Stuffing':

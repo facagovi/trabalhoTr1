@@ -86,14 +86,18 @@ def fsk(trem, f1, f2):
 def qpsk(trem):
     sinal = []
 
+    ctrem = list(trem)
+    if len(ctrem) % 2 != 0:
+        ctrem.append(0) 
+
     fase_map = {
         (0, 0): np.pi/4,
         (0, 1): 3 * np.pi/4,
         (1, 1): 5 * np.pi/4,
         (1, 0): 7 * np.pi/4,}
     
-    for i in range(0, len(trem), 2):
-        b_pair = (trem[i], trem[i+1])
+    for i in range(0, len(ctrem), 2):
+        b_pair = (ctrem[i], ctrem[i+1])
         fase = fase_map[b_pair]
         for n in range(100):
             # frequência de 1Hz para simplicidade
@@ -106,6 +110,10 @@ def qpsk(trem):
 # Modula em função tanto da amplitude quanto da fase
 def qam16(trem):
     sinal = []
+
+    c4trem = list(trem)
+    while len(c4trem) % 4 != 0:
+        c4trem.append(0)
     map = {
         (0,0,0,0): (0.33, 225),
         (0,0,0,1): (0.75, 255),
@@ -126,7 +134,7 @@ def qam16(trem):
     }
 
     for i in range(0, len(trem), 4):
-        quad = (trem[i], trem[i+1], trem[i+2], trem[i+3])
+        quad = (c4trem[i], c4trem[i+1], c4trem[i+2], c4trem[i+3])
         amp, fase_deg = map[quad]
         fase = fase_deg * np.pi / 180.0
 

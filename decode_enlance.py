@@ -7,7 +7,7 @@ class EnlaceRx:
         binario_str = "".join(str(b) for b in lista_bits)
         return int(binario_str, 2)
     
-    def denqCara(self, quadro):
+    def denqCont(self, quadro):
         if len(quadro) < 16:
             return []
         header = quadro[:16]
@@ -26,7 +26,6 @@ class EnlaceRx:
         while i < len(quadro):
             byta = quadro[i : i+8]
             if byta == self.ESC:
-                #pula o ESC (i+8) e pega o próximo byte como dado literal
                 i += 8
                 proximo_byte = quadro[i : i+8]
                 dados_limpos.extend(proximo_byte)

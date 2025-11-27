@@ -9,10 +9,14 @@ class EnlaceTx:
         binario_str = f'{valor:0{num_bits}b}'
         return [int(b) for b in binario_str]  
     
-    def enqCara(self, dados):
-        quantbyt = len(dados) // 8
+    def enqCont(self, dados):
+        padding = list(dados)
+        while len(padding) % 8 != 0:
+            padding.append(0)
+
+        quantbyt = len(padding) // 8
         header = self.trem(quantbyt, 16)
-        return header + dados 
+        return header + padding 
     
     def enqBytes(self, dados):
         proteg = []
