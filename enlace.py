@@ -22,9 +22,7 @@ class EnlaceTx:
             if byta == self.FLAG or byta == self.ESC:
                 #insere o ESC de proteção antes
                 proteg.extend(self.ESC)
-
             proteg.extend(byta)
-
         return self.FLAG + proteg + self.FLAG 
     
     def enqBits(self, dados):
