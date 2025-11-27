@@ -67,7 +67,14 @@ class EnlaceRx:
         else:
             return False, []
     def Ddetsoma(self, quadro):
-        dados_copia = list(quadro)
+        if len(quadro) < 16:
+            return False, []
+        
+        padding=list(quadro[:-16])
+        while len(padding)%16 !=0:
+            padding.append(0)
+
+        dados_copia = padding + list(quadro[-16:])
         soma = 0
         for i in range(0, len(dados_copia), 16):
             pedaco = dados_copia[i : i+16]
