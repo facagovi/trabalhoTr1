@@ -81,16 +81,22 @@ class Interface:
 
         try:
             resultado = self.simulador.executar_simulacao(msg, config)
-            
             self.ax.clear()
-            dados_plot = resultado['sinal_grafico']
-            if len(dados_plot) > 1000: dados_plot = dados_plot[:1000]
             
-            self.ax.plot(dados_plot, color='blue', linewidth=0.8)
-            self.ax.set_title(f"Sinal Modulado ({config['modulacao']}) com Ruído {config['sigma_ruido']}")
-            self.ax.grid(True)
+            sinal_tx = resultado['sinal_tx']
+            sinal_rx = resultado['sinal_rx']
+            
+            limit = 1000
+            if len(sinal_tx) > limit: 
+                sinal_tx = sinal_tx[:limit]
+                sinal_rx = sinal_rx[:limit]
+            
+            self.ax.plot(sinal_tx, color='green', linewidth=2, alpha=0.5, label='Transmitido (Tx)')
+            self.ax.plot(sinal_rx, color='blue', linewidth=0.8, label='Recebido (Rx)')
+            self.ax.set_title(f"Sinal Modulado: Tx vs Rx ({config['modulacao']})")
+            self.ax.legend() # <--- IMPORTANTE: Adiciona a legenda para saber quem é quem
+            self.ax.grid(True, linestyle='--', alpha=0.6)
             self.canvas.draw()
-
             self.txt_log.delete("1.0", tk.END)
             self.txt_log.insert(tk.END, f"=== CONFIGURAÇÃO ===\n")
             self.txt_log.insert(tk.END, f"Enquadramento: {config['enquadramento']} | Erro: {config['erro']} | Mod: {config['modulacao']}\n\n")

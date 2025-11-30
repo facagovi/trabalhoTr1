@@ -108,7 +108,8 @@ class Simulador:
         texto_final = self.stringamento(bits_finais)
 
         return {
-            "sinal_grafico": sinal_com_ruido,
+            "sinal_tx": sinal_modulado,
+            "sinal_rx": sinal_com_ruido,
             "texto_final": texto_final,
             "status": status,
             "bits_tx": bits_enlace_entrada,
